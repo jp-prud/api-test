@@ -1,0 +1,65 @@
+service: api
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  httpApi:
+    cors:
+      allowedOrigins:
+        - "*"
+      allowedHeaders:
+        - "*"
+
+plugins:
+  - serverless-middleware
+  - serverless-dotenv-plugin
+  - serverless-esbuild
+  - serverless-offline
+
+custom:
+  esbuild:
+    target: node20
+    minify: true
+  middleware:
+    cleanFolder: false
+
+functions:
+  signIn:
+    handler: src/server/routes/Auth.signIn
+    events:
+      - httpApi:
+          method: POST
+          path: /sign-in
+  createCustomer:
+    handler: src/server/routes/Customer.create
+    middleware:
+      pre:
+        - src/app/middlewares/AuthenticationMiddleware.handler
+    events:
+      - httpApi:
+          method: POST
+          path: /customer
+  listAllCustomers:
+    handler: src/server/routes/Customer.listAll
+    events:
+      - httpApi:
+          method: GET
+          path: /customer
+  createReport:
+    handler: src/server/routes/Report.create
+    middleware:
+      pre:
+        - src/app/middlewares/AuthenticationMiddleware.handler
+    events:
+      - httpApi:
+          method: POST
+          path: /report
+
+package:
+  individually: true
+  patterns:
+    - "!node_modules/.prisma/client/libquery_engine-*"
+    - "node_modules/.prisma/client/libquery_engine-rhel-*"
+    - "!node_modules/prisma/libquery_engine-*"
+    - "!node_modules/@prisma/engines/**"

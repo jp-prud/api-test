@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum EmotionalState {
+  happy
+  neutral
+  sad
+
+  @@map("emotional_state")
+}
+
+enum MealsStateOptions {
+  ate
+  didntEat
+  ateLittle
+  refuesed
+
+  @@map("meals_state_options")
+}
+
+model Company {
+  id        String     @id @default(uuid())
+  name      String     @unique
+  accessKey String
+  phone     String
+  customers Customer[]
+  reports   Report[]
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  @@map("companies")
+}
+
+model Customer {
+  id        String   @id @default(uuid())
+  companyId String   @map("company_id")
+  name      String   @unique
+  age       Int
+  phone     String
+  room      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  Company   Company  @relation(fields: [companyId], references: [id])
+  Report    Report[]
+
+  @@map("customers")
+}
+
+model Report {
+  id             String         @id @default(uuid())
+  companyId      String         @map("company_id")
+  customerId     String         @map("customer_id")
+  mealsStateId   String         @map("meals_state_id")
+  emotionalState EmotionalState @map("emotional_state")
+  anotations     String?
+  evaluations    String
+  bathings       String
+  ferver         String
+  hydration      String
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
+  mealsState     MealsState     @relation(fields: [mealsStateId], references: [id])
+  Company        Company        @relation(fields: [companyId], references: [id])
+  Customer       Customer       @relation(fields: [customerId], references: [id])
+
+  @@map("reports")
+}
+
+model MealsState {
+  id             String            @id @default(uuid())
+  brakefast      MealsStateOptions
+  lunch          MealsStateOptions
+  afternoonSnack MealsStateOptions @map("afternoon_snack")
+  dinner         MealsStateOptions
+  createdAt      DateTime          @default(now()) @map("created_at")
+  updatedAt      DateTime          @updatedAt @map("updated_at")
+  Report         Report[]
+
+  @@map("meals_state")
+}

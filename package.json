@@ -1,0 +1,27 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "sls offline start --reloadHandler "
+  },
+  "dependencies": {
+    "@prisma/client": "^5.10.2",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "openai": "^4.28.0",
+    "prisma": "^5.10.2",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.134",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.6",
+    "esbuild": "^0.20.1",
+    "serverless-dotenv-plugin": "^6.0.0",
+    "serverless-esbuild": "^1.51.0",
+    "serverless-middleware": "^3.3.0",
+    "serverless-offline": "^13.3.3"
+  }
+}
